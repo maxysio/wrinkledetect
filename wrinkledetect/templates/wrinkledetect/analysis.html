@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+    {% if Error %}
+    <p>Error: {{ Error }}</p>
+    {% elif img_anly %}
+    <table>
+        <tr>
+            <td>
+                <img src="{{ img_anly.img_anly_fn.url }}" alt="Pic">
+            </td>
+            <td>
+                <p>Number of Wrinkles: {{ img_anly.num_objects }}</p>
+                <p>Seat Serail: {{ img_anly.img_seat_serial }}</p>
+                <p>Execution Start Time: {{ img_anly.img_anly_start_time }}</p>
+                <p>Execution End Time: {{ img_anly.img_anly_end_time }}</p>
+                <p>Duration (in seconds): {{ img_anly.img_anly_exec_time }}</p>
+                <p>Response JSON: {{ img_anly.img_analysis_json }}</p>
+            </td>
+        </tr>
+    </table>
+
+    {% endif %}
+
+    <p>
+        <input type=button value="Back" onClick="javascript:history.go(-1);">
+    </p>
+</form>
+
+{% endblock %}

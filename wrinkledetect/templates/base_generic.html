@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        {% block title %}<title>ABC Inc. Careers</title>{% endblock %}
+        {% block title %}<title>ABC Inc. Wrinkle Detect</title>{% endblock %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -12,7 +12,8 @@
         <h1 class="banner_style">
             <a href="{% url 'index' %}">Wrinkle Detect Application</a>
         </h1>
-        {% block content %}{% endblock %}
-        
+        <div class="regular_text">
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>
