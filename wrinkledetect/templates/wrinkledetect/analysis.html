@@ -7,15 +7,32 @@
     <table>
         <tr>
             <td>
-                <img src="{{ img_anly.img_anly_fn.url }}" alt="Pic">
+                <img src="{{ img_anly.img_anly_fn.url }}" alt="Pic" height="450" width="600">
             </td>
             <td>
-                <p>Number of Wrinkles: {{ img_anly.num_objects }}</p>
-                <p>Seat Serail: {{ img_anly.img_seat_serial }}</p>
-                <p>Execution Start Time: {{ img_anly.img_anly_start_time }}</p>
-                <p>Execution End Time: {{ img_anly.img_anly_end_time }}</p>
-                <p>Duration (in seconds): {{ img_anly.img_anly_exec_time }}</p>
-                <p>Response JSON: {{ img_anly.img_analysis_json }}</p>
+                <table class="table_style">
+                    <tr class="table_row_style">
+                        <td>Number of Wrinkles</td>
+                        <td>{{ img_anly.num_objects }}</td>
+                    </tr>
+                    <tr class="table_row_style">
+                        <td>Seat Serial</td>
+                        <td>{{ img_anly.img_seat_serial }}</td>
+                    </tr>
+                    <tr class="table_row_style">
+                        <td>Execution Start Time</td>
+                        <td>{{ img_anly.img_anly_start_time }}</td>
+                    </tr>
+                    <tr class="table_row_style">
+                        <td>Execution End Time</td>
+                        <td>{{ img_anly.img_anly_end_time }}</td>
+                    </tr>
+                    <tr class="table_row_style">
+                        <td>Duration (in seconds)</td>
+                        <td>{{ img_anly.img_anly_exec_time }}</td>
+                    </tr>
+                    
+                </table>
             </td>
         </tr>
     </table>

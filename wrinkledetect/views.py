@@ -89,22 +89,8 @@ def CreateAnalyzedFile(img, wrinkles):
     fn_ext = img.img_fn.name.split('.')[1]
     img_anly_fn = just_fn + '_anly.' + fn_ext
 
-    # Scale the image
-    im1 = Image.open(settings.MEDIA_ROOT + '/' +
-                     img.img_fn.name)
-
-    if(im1.size[0] > im1.size[1]):
-        w1 = 20
-        h1 = 15
-    else:
-        w1 = 10
-        h1 = 20
-
-    plt.gcf().set_size_inches(int(w1), int(h1))
-
     im = np.array(Image.open(settings.MEDIA_ROOT + '/' +
                              img.img_fn.name), dtype=np.uint8)
-
     fig, ax = plt.subplots(1)
     ax.imshow(im)
 
@@ -112,11 +98,12 @@ def CreateAnalyzedFile(img, wrinkles):
         left, top, width, height = w['location']['left'], w['location'][
             'top'], w['location']['width'], w['location']['height']
         rect = patches.Rectangle(
-            (left, top), width, height, linewidth=1, edgecolor='r', facecolor='none')
+            (left, top), width, height, linewidth=2, edgecolor='r', facecolor='none')
         ax.add_patch(rect)
+        plt.text(left, top-15, str(round(float(w['score'])*100,2))+'%', color='red', fontsize=55)
 
     plt.axis('off')
-
+    plt.gcf().set_size_inches(56, 42)
     plt.savefig(settings.MEDIA_ROOT + '/' + img_anly_fn, bbox_inches='tight')
 
     return img_anly_fn
@@ -125,7 +112,17 @@ def CreateAnalyzedFile(img, wrinkles):
 def AnalyzeImage(img_fn):
 
     # Authenticate with IBM Watson
-    #img_file = open(settings.MEDIA_ROOT + '/' + img_fn.img_fn.name, 'rb')
+    
+    #authenticator = IAMAuthenticator(
+    #    'PROVIDE YOUR API KEY')
+    
+    visual_recognition = VisualRecognitionV4(
+        version='2019-02-11', authenticator=authenticator)
+
+    #visual_recognition.set_service_url(
+    #    'PROVIDE YOUR SERVICE URL')
+
+
     zipFile = ZipFile(settings.MEDIA_ROOT + '/' +
                       img_fn.img_fn.name + '.zip', 'w')
     zipFile.write(settings.MEDIA_ROOT + '/' + img_fn.img_fn.name)
@@ -139,13 +136,13 @@ def AnalyzeImage(img_fn):
     execution_time = 0
 
     try:
-        resp = visual_recognition.analyze(collection_ids=[""],
+        resp = visual_recognition.analyze(collection_ids=["399edcc3-e1bb-46b7-9ce8-6e5acf56a43c"],
                                           features=[
                                               AnalyzeEnums.Features.OBJECTS.value],
-                                          images_file=[FileWithMetadata(img_file)], threshold=0.30).get_result()
+                                          images_file=[FileWithMetadata(img_file)], threshold=0.25).get_result()
 
         execution_end_time = time.time()
-        execution_time = execution_end_time - execution_start_time
+        execution_time = round(execution_end_time - execution_start_time, 2)
         resp['start_time'] = str(time.asctime(
             time.localtime(execution_start_time)))
         resp['end_time'] = str(time.asctime(
