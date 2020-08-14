@@ -1,4 +1,6 @@
-# This is a project to use Watson Visual recognition and implement it in a Django website
+# Wrinkle Detection - Website
+
+This is a project to use Watson Visual recognition and implement it in a Django website
 
 For this project, I have created a free IBM Cloud log in and am using the Lite Free plan. I created a Project in IBM Watson and added the ImageRecongition Service to it. I used Custom Image classification to identify wrinkles in a specific kind of cloth. The custom object classified is "Wrinkle"
 
