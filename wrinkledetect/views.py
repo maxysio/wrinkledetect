@@ -88,9 +88,13 @@ def CreateAnalyzedFile(img, wrinkles):
     just_fn = img.img_fn.name.split('.')[0]
     fn_ext = img.img_fn.name.split('.')[1]
     img_anly_fn = just_fn + '_anly.' + fn_ext
+    rsz_fn = settings.MEDIA_ROOT + '/' + just_fn + '_rsz.' + fn_ext
 
-    im = np.array(Image.open(settings.MEDIA_ROOT + '/' +
-                             img.img_fn.name), dtype=np.uint8)
+    #im = np.array(Image.open(settings.MEDIA_ROOT + '/' +
+    #                         img.img_fn.name), dtype=np.uint8)
+    
+    im = np.array(Image.open(rsz_fn), dtype=np.uint8)
+
     fig, ax = plt.subplots(1)
     ax.imshow(im)
 
@@ -98,12 +102,12 @@ def CreateAnalyzedFile(img, wrinkles):
         left, top, width, height = w['location']['left'], w['location'][
             'top'], w['location']['width'], w['location']['height']
         rect = patches.Rectangle(
-            (left, top), width, height, linewidth=2, edgecolor='r', facecolor='none')
+            (left, top), width, height, linewidth=1, edgecolor='r', facecolor='none')
         ax.add_patch(rect)
-        plt.text(left, top-15, str(round(float(w['score'])*100,2))+'%', color='red', fontsize=55)
+        plt.text(left, top-5, str(round(float(w['score'])*100,2))+'%', color='red', fontsize=12)
 
     plt.axis('off')
-    plt.gcf().set_size_inches(56, 42)
+    #plt.gcf().set_size_inches(30, 30)
     plt.savefig(settings.MEDIA_ROOT + '/' + img_anly_fn, bbox_inches='tight')
 
     return img_anly_fn
@@ -113,23 +117,36 @@ def AnalyzeImage(img_fn):
 
     # Authenticate with IBM Watson
     
+
     #authenticator = IAMAuthenticator(
     #    'PROVIDE YOUR API KEY')
     
-    visual_recognition = VisualRecognitionV4(
-        version='2019-02-11', authenticator=authenticator)
+    #visual_recognition = VisualRecognitionV4(
+    #    version='2019-02-11', authenticator=authenticator)
 
     #visual_recognition.set_service_url(
     #    'PROVIDE YOUR SERVICE URL')
 
+    just_fn = img_fn.img_fn.name.split('.')[0]
+    fn_ext = img_fn.img_fn.name.split('.')[1]
+    abs_fn = settings.MEDIA_ROOT + '/' + img_fn.img_fn.name
+    rsz_fn = settings.MEDIA_ROOT + '/' + just_fn + '_rsz.' + fn_ext
+    zip_fn = abs_fn + '.zip'
 
-    zipFile = ZipFile(settings.MEDIA_ROOT + '/' +
-                      img_fn.img_fn.name + '.zip', 'w')
-    zipFile.write(settings.MEDIA_ROOT + '/' + img_fn.img_fn.name)
-    zipFile = None
+    # Resize the file
+    with open(abs_fn, 'rb') as f:
+        with Image.open(f) as image:
+            #rsz_img = resizeimage.resize_contain(image, [300, 300])
+            #rsz_img.save(rsz_fn, image.format)
+            img_upd = image.resize((800,600))
+            img_upd.save(rsz_fn)
 
-    img_file = open(settings.MEDIA_ROOT + '/' +
-                    img_fn.img_fn.name + '.zip', 'rb')
+    # If its only 1 file no need to zip the file
+    #zipFile = ZipFile(zip_fn, 'w')
+    #zipFile.write(rsz_fn)
+    #zipFile = None
+
+    img_file = open(rsz_fn, 'rb')
 
     objs = {}
     execution_start_time = time.time()
@@ -141,6 +158,7 @@ def AnalyzeImage(img_fn):
                                               AnalyzeEnums.Features.OBJECTS.value],
                                           images_file=[FileWithMetadata(img_file)], threshold=0.25).get_result()
 
+        
         execution_end_time = time.time()
         execution_time = round(execution_end_time - execution_start_time, 2)
         resp['start_time'] = str(time.asctime(

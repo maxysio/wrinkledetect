@@ -24,9 +24,9 @@ class ImageAnalysis(models.Model):
         verbose_name='Analysis JSON')
     img_anly_fn = models.ImageField(
         verbose_name='Analyzed Image', upload_to='upload_img', null=True, validators=[validate_file_extension])
-    img_anly_start_time = models.DateTimeField(
+    img_anly_start_time = models.TimeField(
         verbose_name='Start Time: ', auto_now=True)
-    img_anly_end_time = models.DateTimeField(
+    img_anly_end_time = models.TimeField(
         verbose_name='End Time: ', auto_now=True)
     img_anly_exec_time = models.DecimalField(
         verbose_name='Execution Duration: ', default=0, decimal_places=10, max_digits=30)
